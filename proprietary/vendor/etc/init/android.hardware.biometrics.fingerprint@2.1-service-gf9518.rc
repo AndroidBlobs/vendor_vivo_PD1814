@@ -1,0 +1,22 @@
+on property:sys.fingerprint.boot=udfp_goodix_gf9518
+    chown system system /dev/goodix_fp_9518
+    chmod 0644 /dev/goodix_fp_9518
+    enable biometrics-fingerprint-gf9518
+
+# Notified from gf9518-restart-counter-sh
+on property:sys.fingerprint.stop=biometrics-fingerprint-gf9518
+    stop biometrics-fingerprint-gf9518
+
+service biometrics-fingerprint-gf9518 /vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service-gf9518
+    class late_start
+    user system
+    group system input
+    group media_rw system
+    onrestart restart gf9518-restart-counter-sh
+    disabled
+
+service gf9518-restart-counter-sh /system/vendor/bin/sh /vendor/bin/init.vivo.fingerprint_restart_counter.sh biometrics-fingerprint-gf9518 5
+    user system
+    group system
+    disabled
+    oneshot
